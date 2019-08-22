@@ -1,5 +1,5 @@
 # mpsi_reimpl
-This is a re-implementation of the MPSI project by Brenty Hilpert
+This is a re-implementation of the MPSI project by Brent Hilpert
 
 Brent Hilpert has created a [combination of hardware and software that allows a HP 9830](http://madrona.ca/e/HP9830/mpsi/index.html) 
 to transfer data back a forth a modern host computer. It ias based on several TTL chips and a serial link to a host computer. 
