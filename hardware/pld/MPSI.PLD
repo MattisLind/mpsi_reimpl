@@ -1,0 +1,67 @@
+Name     MPSI ;
+PartNo   00 ;
+Date     2019-08-11 ;
+Revision 01 ;
+Designer Mattis Lind ;
+Company  Dalby Datormuseum ;
+Assembly None ;
+Location  ;
+Device    f1502ispplcc44;
+
+/* *************** INPUT PINS *********************/
+PIN 1    =   RPICTL;
+PIN 2    =   nCEO;
+PIN 4    =   CR_IN;
+PIN 5    =   INT_IN;
+PIN 6    =   nSIH;
+PIN 8    =   nRESET;
+PIN 9    =   GM_ACK;
+PIN 11   =   CO0;
+PIN 12   =   CO1;
+PIN 14   =   CO2;
+PIN 16   =   CO3;
+PIN 17   =   JMPTP;
+PIN 18   =   JMPGP;
+PIN 19   =   JMPPR;
+/* *************** OUTPUT PINS *********************/
+PIN 20    =  SSI;
+PIN 21    =  CR;
+PIN 24    =  DATA_EN;
+PIN 25    =  STATUS_EN;
+PIN 26    =  ACK;
+PIN 27    =  DATA_AV; 
+PIN 28    =  DEV_ENB; 
+PIN 29    =  nTP;
+PIN 31    =  nGP;
+PIN 33    =  nPR;
+
+
+nTP = JMPTP & CO0 & !CO1 & !CO2 & CO3; 
+nGP = JMPGP & !CO0 & !CO1 & !CO2 & CO3;
+nPR = JMPPR & CO0 & CO1 & CO2 & CO3;
+
+SSI.D = INT_IN;
+SSI.CK = RPICTL;
+SSI.AR =  ( !nRESET # DEV_ENB );
+
+DEV_ENB = ! nCEO & DEV_SELECT;
+
+DEV_SELECT = ! (nTP & nPR & nGP);
+
+STATUS_EN = (! nTP & ! DEV_ENB) # (nTP & DEV_SELECT);
+
+DATA_EN =   (! nTP &  DEV_ENB ) # (nTP & DEV_SELECT & !nSIH );
+
+DATA_AV.CK = DEV_ENB; 
+DATA_AV.AR = ! RPICTL; 
+DATA_AV.D = 'b'1; 
+
+CR.CK = RPICTL;
+CR.D = CR_IN;
+CR.AR = ! DEV_ENB;
+
+ACK.D = GM_ACK;
+ACK.CK = RPICTL; 
+ACK.AR = ! ( ! DEV_ENB # ! nTP) ; 
+
+
