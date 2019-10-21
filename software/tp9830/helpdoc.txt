@@ -1,0 +1,247 @@
+#	int*roduction
+--------------------------------------------------
+--	tp9830 & tp9865
+--	User Documentation
+--------------------------------------------------
+
+tp9830 and tp9865 are programs providing for manipulation of 9830
+tape images and for controlling a 9830 or 9865 cassette tape drive.
+tp9830 provides control of the internal 9830 tape drive through the MPSI I/O interface.
+tp9865 provides control of a 9865 drive with a 9865 I/O adapter installed.
+
+Running tp9830/65 on RPi/linux will generally require sudo to access the GPIO pins to
+control the tape drive. A version of tp9830/65 may be compiled that does not access the GPIO,
+useful for stand-alone manipulation of tape images.
+
+In the following:
+	- a 'tape image' is a byte-level copy of the contents of a 9830 cassette tape.
+	- a 'tape image file' (.t98) is a file version of the above.
+	- a 'tape file' (.f98) is a 9830 BASIC, data, key or bin file normally contained
+	  within a tape or tape image. That is, there may be multiple tape files on a tape,
+	  or within a tape image. Tape files are 16-bit-word-oriented.
+
+	- Number arguments may be in standard decimal, octal or hexadecimal syntax.
+	- Characters after a '*' in a keyword are optional.
+
+tp9830/65 maintains and works upon a buffer of one tape image in memory.
+
+
+#	images
+Tape Images:
+------------
+
+Due to the characteristics of the 9830 tape drives, the control-byte modifier of BOF bytes
+is not recovered when reading, although the 0x3C BOF byte itself is.
+The BOF bytes then, must be determined by assuming that a 0x3C byte 'outside' a tape file
+header or contents - as determined sequentially by header data - is such a BOF byte.
+A recovered image must have the BOFs marked as control bytes before using the image.
+See the clean command.
+
+There is no explicit end-of-tape indicator for tapes.
+Generally, tapes will have an 'EOT' file - an empty file after the last 'used' file.
+The 9830 firmware marks an extra file of the same size as the last file to this end.
+tp9830/65 marks a file of size 13 words for EOT files.
+
+
+#	use
+Use:
+----
+
+tp9830 [-u] [<tapeFile>.. > <tapeImageFile>]
+tp9865 [-u] [<tapeFile>.. > <tapeImageFile>]
+
+	-u:		Display use message and exit.
+	<tapeFile>:	Tape files to be processed into a tape image file.
+
+tp9830 & tp9865 execute in either interactive mode or in single-execution mode.
+If no arguments are specified at invokation, the interactive mode is entered.
+
+If any tape files are specified at invokation the tape file(s) are inserted into a
+tape image in the order they appear on the command line, the image is then output to
+the standard output in XNS format.
+
+When starting tp9830 in interactive mode it will attempt to communicate with the
+MTAPE program running on the 9830, waiting for MTAPE to respond.
+Ctl-C/interrupt may be used to terminate the wait and get to the tp9830 prompt.
+
+
+#
+Commands:
+--------
+
+#C	o*pen <fname> [dbb]
+
+	Read the tape image file <fname> into the image buffer.
+	The image file is interpreted as a sequence of bytes in XNS format,
+	with BOF-bytes having a value greater than 255.
+	If 'dbb' is specified, the image file is interpreted as double-byte binary.
+
+
+#C	sa*ve <fname>
+
+	Save the image buffer to file <fname>.
+
+
+#C	b*uf [<addr> [<count>]]
+
+	Display a range of bytes in the image buffer.
+
+	The bytes are displayed in 2 forms:
+		- hex bytes,
+		- ASCII characters.
+
+	Bytes that are marked as BOF-bytes will appear with a '*' preceding the hex value.
+
+
+#C	l*ist [<fnum>]
+
+	List the tape files in the image buffer, or display a tape file.
+	Some analysis is done, such as checking checksums.
+
+	If <fnum> is specified, the header and contents of tape file <fnum> will be displayed.
+	The contents are displayed in 3 forms:
+		- hex bytes,
+		- octal words,
+		- ASCII characters, byte-swapped such that they are in readable order.
+
+
+#C	mark [<numFiles> [<fSpace> [<fNum>] ] ]
+
+	Mark the image buffer with <numFiles> empty tape files, each of size <fSpace> words,
+	starting at file <fNum>.
+
+	If <fNum> is not specified, marking starts with the last file in the image (overwritten).
+	If <fNum> is specified, the file must be present in the image.
+
+	If the image buffer was empty, 300 bytes of zero-padding are marked at the start of the buffer,
+	before marking the new tape files.
+
+	<fspace> defaults to 1000.
+
+	An additional EOT tape file of size 13 words is marked after the last of the specified tape files.
+
+	If <numFiles> is not specified an EOT file is appended to the end of the image buffer,
+	to provide for situations where the EOT file is missing.
+
+	Zero-padding of 25% of the file size is included after each tape file.
+
+
+#C	load <fname> [<fnum>]
+
+	Read the external file <fname> into the image buffer as the contents of tape file <fnum>.
+	If <fnum> is not specified, the last tape file in the image buffer is remarked and
+	overwritten and a new EOT file marked. If there were no tape files in the image buffer,
+	a new tape file of the requisite size is marked and written and an EOT file marked.
+
+	File <fname> should be a tape file in XNS format as produced by the store command or
+	the asm9830 assembler with the -x flag.
+
+	The tape file checksums and content length are updated.
+	The tape file space header value is updated if it was less than the content length,
+	but the actual file space in the image is not checked or increased (*fix!!!*).
+
+
+#C	store <fnum> <fname>
+
+	Write the tape file <fnum> from the image buffer to the file <fname>.
+	The tape file will be written as 16-bit words in XNS format,
+	and will include the header and checksums.
+
+
+#C	clean*up [z*eroes] [bof*s] [seq*uence] [ch*ecksums] [pad*ding] [tr*uncate]
+
+	Cleanup various aspects of the image buffer.
+	If no option keywords are specified all options are performed.
+
+	Options:
+		zeroes		- Non-zero bytes that are 'outside' tape files are cleared.
+		BOFs		- 0x3C bytes that are outside tape file header and content
+				  area will be marked as BOF bytes.
+		sequence	- File numbers are sequenced starting from 0.
+		checksums	- All checksums are recalculated.
+		padding		- Insert zero bytes as necessary to ensure at least 300 bytes
+				  padding at BOT, at least 25% padding for each tape file,
+				  and 300 bytes at EOT.
+		truncate	- The image buffer is truncated after the last byte of the
+				  last file, although if padding is specified the EOT padding
+				  is still ensured.
+
+
+#C	tr*uncate [<length>]
+
+	Truncate the image  buffer to <length> bytes.
+	<length> defaults to 0.
+
+
+#C	z*eroes <addr> <count>
+
+	Zero the specified range of bytes in the image buffer.
+	<addr> starts at 0.
+
+
+#C	bs*et <addr> <byte> [<byte>]
+
+	Set the value of one or two bytes in the image buffer.
+	<addr> starts at 0.
+
+
+#C	n*umber <n>
+
+	Display <n> in decimal, hex, and octal.
+	Provided for quick base conversion.
+
+
+#C	q*uit / EOF
+
+	Terminate the program.
+
+
+#
+
+The following commands control the tape drive:
+
+#C	rim*age [full] [fast] [<maxBytes>]
+
+	Read bytes from the tape drive into the image buffer.
+
+	The read terminates if no bytes are seen for several seconds.
+	*** timeout not implemented yet in tp9830.
+	If 'full' is specified the timeout is extended so reading will continue until leader
+	or some other exception occurs.
+
+	if <maxBytes> is specified, reading will terminate when that number of bytes are read.
+
+	'fast' does a high-speed read (generally not reliable).
+
+
+#C	wimage
+
+	Write the image buffer to the tape drive.
+
+
+#C	sta*tus
+
+	Display the tape drive status.
+	Actually executes a 'continue' command on the drive.
+
+#C	rew*ind
+
+	Send a rewind command (RRH) to the tape drive.
+
+	Note that if the tape is already rewound, the drive will still attempt to rewind the tape
+	because the drive cannot distinguish leader at the EOT versus BOT.
+	To avoid having the motor left jammed on, in this command if the tape is in leader and 
+	does not move out of leader within 3 seconds, a stop command will be issued.
+
+
+#C	sto*p
+
+	Send a stop command to the tape drive.
+
+
+#C	dr*ive rfn|rfh|rrn|rrh|wfn|stop|cont*inue [control]
+
+	Send the specified low-level command to the tape drive.
+	If control is specified, the control-mode bit is set in the command.
+
+
