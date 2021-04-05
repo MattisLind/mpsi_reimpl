@@ -27,3 +27,5 @@ The SD Card would contain a FAT file system that contain a configuration file an
 USB can be used as a virtual serial port and connect to host terminal program for printer output. 
 
 Two 74LVC574 is used to latch data and control signals from the HP9830. Five 74LS38 OC drviers are used to drive the bus. One Xilinx XC3C32A CPLD is used to replace all glue logic. A STM32F407VET6 SoC is used for managing all data flows. a SD card connector and USB port is needed and some small components.
+
+![Schematic](https://raw.githubusercontent.com/MattisLind/mpsi_reimpl/master/MPSIBOARD/MPSIBOARD.png)
