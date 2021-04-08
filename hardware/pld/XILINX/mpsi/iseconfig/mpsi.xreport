@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <report-views version="2.0" >
  <header>
-  <DateModified>2021-01-21T20:42:52</DateModified>
+  <DateModified>2021-04-08T19:09:47</DateModified>
   <ModuleName>mpsi</ModuleName>
   <SummaryTimeStamp>2021-01-20T13:07:21</SummaryTimeStamp>
-  <SavedFilePath>C:/Users/mattis/mpsi/iseconfig/mpsi.xreport</SavedFilePath>
-  <ImplementationReportsDirectory>C:/Users/mattis/mpsi\</ImplementationReportsDirectory>
+  <SavedFilePath>C:/Users/mattis/mpsi_reimpl/hardware/pld/XILINX/mpsi/iseconfig/mpsi.xreport</SavedFilePath>
+  <ImplementationReportsDirectory>C:/Users/mattis/mpsi_reimpl/hardware/pld/XILINX/mpsi\</ImplementationReportsDirectory>
   <DateInitialized>2021-01-17T19:19:50</DateInitialized>
   <EnableMessageFiltering>false</EnableMessageFiltering>
  </header>

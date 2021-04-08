@@ -56,7 +56,10 @@ entity mpsi is
            DATA_ENB : out  STD_LOGIC;
            INT_ID : out  STD_LOGIC;
 			  nRESET: in STD_LOGIC;
-			  DATACLK: out STD_LOGIC);
+			  DATACLK: out STD_LOGIC;
+			  TP: out STD_LOGIC;
+			  PR: out STD_LOGIC;
+			  GP: out STD_LOGIC);
 end mpsi;
 
 architecture Behavioral of mpsi is
@@ -137,6 +140,9 @@ logic: PROCESS (CO0, CO1, CO2, CO3, GPSEL0, GPSEL1, GPSEL2, GPSEL3, TPSEL0, TPSE
      INT_ID <= NOT u9c;	
      ACK <= nTP NAND (NOT u11a);
 	  DATACLK <= u11b;
+	  TP <= nTP;
+	  PR <= nPR;
+	  GP <= nGP;
 END PROCESS logic;
    
 	
