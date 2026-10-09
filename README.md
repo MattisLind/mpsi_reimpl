@@ -1,31 +1,46 @@
-# mpsi_reimpl
-This is a re-implementation of the MPSI project by Brent Hilpert
+# MPSI Rev2
 
-Brent Hilpert has created a [combination of hardware and software that allows a HP 9830](http://madrona.ca/e/HP9830/mpsi/index.html) 
-to transfer data back a forth a modern host computer. It is based on several TTL chips and a serial link to a host computer. 
-~~The ideas here is to reimplement the same type of system while integrating a Raspbery Pi Zero W on board as well as 
-susbstituting most of the glue logic with a CPLD. Then also to create a KiCAD layout for this and a 3D model for the box to 
-printed in a 3D printer.
-Instead of using a serial protocol the intention is to use a prallell protocol since we have enough pins on the Raspberry Pi Zero W. 
-Input data is latched in two 74LVC574 which also give 5V to 3.3V conversion. Outputs will still be 4 pieces of 74LS38 open collector drivers.
-One more extra 74LVC245 is added to make it possible to have a dipswitch on the board. The dipswitch can then be enabled onto the bus
-and provide selection of various software of tape images to serve from the Raspberry Pi Zero W. The remaining glue logic will be implemented 
-in one single Atmel ATF1502 CPLD programmed in CUPL. This will give a compact layout of the card while still use mostly DIP socketed 
-chips to ease soldering among hobbyists.
-As of now a sketch of the schematic has been created as well as a first draft of the CUPL code.~~
+A new HP 9830 interface based on
+[Brent Hilpert's MPSI](https://madrona.ca/e/HP9830/mpsi/index.html): a 5 V CPLD
+handles the bus, and an STM32F103 serves files from a microSD card.
 
-I have changed my mind concerning ATMEL. The only free tool to use with ATMEL is the WinCUPL program. WinCUPL is OLD. Very OLD! And crashes very often. Simulating is almost impossible. I decided to use Xilinx ISE suite instead and use the more modern XC2C32A CPLD. The design fits easily in this CPLD.
+The proposed hardware uses an ATF1504AS, two 74HCT165 input shift registers,
+separate SPI buses for the HP link and SD card, USB MSC, and a 128x64 SSD1306 OLED
+with up/down/select buttons. General/standard Mode handles paper tape and output
+capture; Fast Mode handles cassette emulation. USB MSC takes exclusive ownership
+of SD and disables HP service until the card is returned.
 
-I also reconsidered the use of Raspi Zero. Although it might be easier to port the code Raspi Zero I think that the STM32F407VET chip is a better match. Abundant GPIOs. SD card reader. USB IO integrated. I2C.
+The second HP application, Tape Controller, uses an MTAPE proxy inside the HP to
+read/write the real cassette drive through the General interface. It is mutually
+exclusive with Server and MSC. See [the reader/writer and image analysis](requirements/07_tape_analysis.md).
 
-With this I could replace all hard wired jumpers of the original design with software controlled settings. The IO addresses and interrupt ID could be set programatically.
+Start with [the requirements](requirements/README.md) and
+[open issues](open_issues.md). The first prototype includes
+[Verilog and a test bench](hardware/rev2/README.md) and a
+[portable C firmware core](firmware/rev2/README.md).
 
-To control the thing I envision a small control device connected over I2C. This control device will the contain a few buttons, a few LEDs and a small I2C display. Connected over a simple four wire cable.
+VHDL is now the selected RTL language, using the private `atf15xx-yosys-docker`
+repository as the planned tool submodule under `hardware/rev2/rtl`. The VHDL port
+is pending; [the hardware notes](hardware/rev2/README.md) document registration
+and the current SSH authentication issue.
 
-The SD Card would contain a FAT file system that contain a configuration file and then all all the paper tape files and cassette tape files that one would like to make available to the HP9830. The small user interface control device would then be used to select among those files as well as set up the configuration of the mpsi device, io addresses and interrupt ids.
+```sh
+make test
+```
 
-USB can be used as a virtual serial port and connect to host terminal program for printer output. 
+Requires Icarus Verilog, make and a C11 compiler. Tests cover bus handshakes and
+gating, capture/overrun, SPI framing, tape commands and exclusive SD/MSC ownership.
 
-Two 74LVC574 is used to latch data and control signals from the HP9830. Five 74LS38 OC drviers are used to drive the bus. One Xilinx XC3C32A CPLD is used to replace all glue logic. A STM32F407VET6 SoC is used for managing all data flows. a SD card connector and USB port is needed and some small components.
+This is an initial design, not hardware ready for manufacture. Current/rail-voltage
+and timing validation, CPLD fitting, a new schematic and Arduino SD/USB/UI drivers
+remain. The draft has 59 registers, so ATF1504 is the initial target; ATF1502 needs
+a different architecture. The checked ATF1504 datasheet guarantees DC VOL at
+**12 mA**, so direct bus drive remains provisional.
 
-![Schematic](https://raw.githubusercontent.com/MattisLind/mpsi_reimpl/master/MPSIBOARD/MPSIBOARD.png)
+The requirements now specify a 24 MHz PA8 TIM1 clock, the reference interrupt
+gating and five ID lines, Arduino_Core_STM32 with SdFat, and SIMH TAP storage.
+The prototype RTL and portable core still need these revisions, Controller role
+support and target integration.
+
+The previous files remain in `MPSIBOARD`, `hardware/pld` and `software`.
+The original README is preserved in [docs/legacy_design.md](docs/legacy_design.md).
