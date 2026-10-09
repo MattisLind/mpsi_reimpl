@@ -1,46 +1,42 @@
 # MPSI Rev2
 
 A new HP 9830 interface based on
-[Brent Hilpert's MPSI](https://madrona.ca/e/HP9830/mpsi/index.html): a 5 V CPLD
-handles the bus, and an STM32F103 serves files from a microSD card.
+[Brent Hilpert's MPSI](https://madrona.ca/e/HP9830/mpsi/index.html): a 5 V ATF1504AS
+CPLD handles the bus, and an STM32F103CB serves files from a microSD card.
+Two 74HCT165s capture input, separate SPI buses serve the HP link and SD,
+and an SSD1306 OLED with up/down/select buttons controls operation.
 
-The proposed hardware uses an ATF1504AS, two 74HCT165 input shift registers,
-separate SPI buses for the HP link and SD card, USB MSC, and a 128x64 SSD1306 OLED
-with up/down/select buttons. General/standard Mode handles paper tape and output
-capture; Fast Mode handles cassette emulation. USB MSC takes exclusive ownership
-of SD and disables HP service until the card is returned.
+MPSI Server handles paper tape, printer capture and Fast Mode cassette emulation.
+Tape Controller uses an HP-resident MTAPE proxy to read/write the physical drive.
+USB MSC takes exclusive ownership of SD and releases every HP output.
+See [the tape analysis](requirements/07_tape_analysis.md).
 
-The second HP application, Tape Controller, uses an MTAPE proxy inside the HP to
-read/write the real cassette drive through the General interface. It is mutually
-exclusive with Server and MSC. See [the reader/writer and image analysis](requirements/07_tape_analysis.md).
+The current draft includes:
 
-Start with [the requirements](requirements/README.md) and
-[open issues](open_issues.md). The first prototype includes
-[Verilog and a test bench](hardware/rev2/README.md) and a
-[portable C firmware core](firmware/rev2/README.md).
+- [VHDL RTL, handshake bench and container build flow](hardware/rev2/README.md).
+- [STM32/CPLD package pins and tentative placement](requirements/08_pin_mapping.md).
+- [Three-sheet KiCad schematic and unrouted placement](hardware/rev2/kicad/README.md),
+  with the existing HP connector, USB-C protection and PA9/PA10 debug header.
+- [Portable C firmware core](firmware/rev2/README.md).
 
-VHDL is now the selected RTL language, using the private `atf15xx-yosys-docker`
-repository as the planned tool submodule under `hardware/rev2/rtl`. The VHDL port
-is pending; [the hardware notes](hardware/rev2/README.md) document registration
-and the current SSH authentication issue.
+Start with [requirements](requirements/README.md) and [open issues](open_issues.md).
 
 ```sh
 make test
 ```
 
-Requires Icarus Verilog, make and a C11 compiler. Tests cover bus handshakes and
-gating, capture/overrun, SPI framing, tape commands and exclusive SD/MSC ownership.
+Requires make, a C11 compiler and either GHDL or the documented Docker image.
+Tests cover bus handshakes, five interrupt choices, GP-only Controller decoding,
+direct configuration updates, unbuffered data, CS-clocked flags, input capture, tape commands
+and exclusive SD/MSC ownership.
 
-This is an initial design, not hardware ready for manufacture. Current/rail-voltage
-and timing validation, CPLD fitting, a new schematic and Arduino SD/USB/UI drivers
-remain. The draft has 59 registers, so ATF1504 is the initial target; ATF1502 needs
-a different architecture. The checked ATF1504 datasheet guarantees DC VOL at
-**12 mA**, so direct bus drive remains provisional.
+The simplified ATF1504 design fits and generates JEDEC with all 29 requested pins,
+JTAG and fourteen open-collector HP outputs. RTL and fitter-emitted functional
+equations each pass 2,000 checks at 9, 18 and 24 MHz SPI. These are zero-delay
+tests; the F103 is specified up to 18 MHz, and 9 MHz is the provisional board rate.
+This remains a design draft. Timing, fitter-report accounting, electrical current/rail and power-up validation, PCB routing,
+and Arduino SD/USB/UI/Controller drivers also remain open. The STM32 pin map uses
+PB14/PB10 as direct 5 V tolerant inputs, subject to supply/reset constraints.
 
-The requirements now specify a 24 MHz PA8 TIM1 clock, the reference interrupt
-gating and five ID lines, Arduino_Core_STM32 with SdFat, and SIMH TAP storage.
-The prototype RTL and portable core still need these revisions, Controller role
-support and target integration.
-
-The previous files remain in `MPSIBOARD`, `hardware/pld` and `software`.
+Previous files remain in `MPSIBOARD`, `hardware/pld` and `software`.
 The original README is preserved in [docs/legacy_design.md](docs/legacy_design.md).

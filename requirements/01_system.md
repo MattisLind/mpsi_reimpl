@@ -15,21 +15,22 @@
 | SYS-011 | Provide mutually exclusive MPSI Server, Tape Controller and USB MSC roles. Server supplies/captures SD files; Controller uses an HP-resident proxy to read/write the physical cassette; MSC releases every HP output and disables both HP roles. | Mode/dispatcher tests, physical proxy/cassette trials and exclusive SD ownership checks. |
 
 Prototype choices: ATF1504AS in a 44-pin package and STM32F103CBT6 in LQFP48.
-The current RTL has 59 register bits, exceeding an ATF1502's 32-register capacity.
+The simplified VHDL RTL has 36 register bits, exceeding an
+ATF1502's 32-register capacity.
 An ATF1502 version requires a different register architecture or more external
-logic. ATF1504 fitting remains an open issue; 59 registers do not prove a fit in
-64 macrocells once routing, output functions and product terms are considered.
+logic. The corrected fitter now declares a fit and emits JEDEC with all requested
+pins retained. RTL and fitter-emitted functional equations pass the handshake
+bench. Timing and the fitter's inconsistent resource totals remain in 005/028/029.
 
 Default proposal: GP=8, TP=9, printer disabled until explicitly enabled, interrupt
-selector=3 (nSI1/DI9 under the revised mapping). The existing RTL/test bench still
-uses its old selector mapping; updating it is tracked in issues 004/010.
-The test bench also exercises the printer-enabled configuration.
-SC0 and SC10 are rejected; duplicate GP/TP addresses and overlap with enabled
-SC15 are rejected. Other attached devices can occupy additional codes; these
+selector=3 (nSI1/DI9 under the revised mapping). The VHDL bench exercises this mapping and the printer-enabled configuration.
+Zero disables a decoder without responding to SC0; firmware rejects SC10,
+duplicate nonzero GP/TP addresses and overlap with enabled SC15. Other attached devices can occupy additional codes; these
 must be checked by the user when configuring the actual installation.
 
 First delivery: documented architecture, executable bus RTL/test bench, and a
-portable C core. Schematic/PCB, target drivers, OLED implementation, SD/SdFat,
+portable C core. A three-sheet schematic and unrouted placement now exist; target drivers,
+OLED implementation, SD/SdFat,
 USB stack, image import, the Tape Controller/proxy frontend and validation on
 an HP are subsequent milestones. The current core implements server functions;
 its SERVING storage state does not distinguish the two required HP roles yet.
@@ -58,5 +59,21 @@ the CPLD clocked with RESET_n released and HP_RUN low.
 Accepted user decision, 2026-10-09: use VHDL for Rev2 RTL and add the private
 `MattisLind/atf15xx-yosys-docker` repository as a Git submodule at
 `hardware/rev2/rtl/atf15xx-yosys-docker`. Use SSH for repository access. The
-existing Verilog prototype and Icarus bench have not yet been ported; submodule
-registration currently needs an authenticated SSH session (issue 004).
+submodule is present at the corrected path, the VHDL port and GHDL bench pass,
+and the Docker image builds. The simplified design now fits with retained JTAG
+and open-collector HP outputs; issue 004 records the image-generation result.
+
+Additional decisions, 2026-10-09: use powered-state FT STM32 inputs directly
+for 5 V MISO/request, reserve PA9/PA10 USART1 on a four-pin debug header,
+reuse the current HP connector symbol/footprint, place CPLD/HCT165s beside it,
+and copy the paper-tape project's USB-C/protection circuit. The package map
+and startup constraints are recorded in 08_pin_mapping.md; unresolved electrical
+and physical validation is recorded in issues 026/027.
+
+RTL simplification agreed 2026-10-09: trust STM32 hardware to shift sixteen bits;
+remove bit counting/frame-valid checks, the response latch bank, separate COMMIT,
+unread-word protection and overrun logic. Shift config with HP selection masked
+by CFG_FRAME. Data/status come directly from the shift register. Retain Hilpert's
+three flag flip-flops, using CS rising for the CTL end-of-transfer function.
+Firmware schedules SPI around HP busy/ready handshaking. The proposed 24 MHz SPI
+exceeds the F103's 18 MHz specification; start at 9 MHz pending timing work in 028.

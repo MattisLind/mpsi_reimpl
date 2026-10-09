@@ -158,11 +158,16 @@ int main(void)
     mpsi_storage s;
     uint8_t buffer[512] = {0};
     uint16_t response;
-    mpsi_config config = {8, 9, 5, true};
-    assert(mpsi_config_valid(config) && mpsi_config_word(config) == 0x0b98);
+    mpsi_config config = {8, 9, 3, true};
+    assert(mpsi_config_valid(config) && mpsi_config_word(config) == 0x0798);
     config.tp_address = 8; assert(!mpsi_config_valid(config));
     config.tp_address = 10; assert(!mpsi_config_valid(config));
     config.tp_address = 15; assert(!mpsi_config_valid(config));
+    config.tp_address = 0; config.printer_enabled = false;
+    assert(mpsi_config_valid(config) && mpsi_config_word(config) == 0x0608);
+    config.gp_address = 0; config.tp_address = 9;
+    assert(mpsi_config_valid(config) && mpsi_config_word(config) == 0x0690);
+    config.irq_selector = 5; assert(!mpsi_config_valid(config));
     assert(mpsi_request_address(0x985a) == 9 && mpsi_request_command(0x985a) == 8);
     assert(mpsi_general_input(0x885a) && !mpsi_general_input(0x805a));
     assert(mpsi_storage_init(&s, port(&m), 100) == MPSI_OK && m.hp);

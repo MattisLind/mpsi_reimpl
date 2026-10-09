@@ -1,0 +1,8 @@
+(sym_lib_table
+  (version 7)
+  (lib
+    (name "Rev2")
+    (type "KiCad")
+    (uri "${KIPRJMOD}/Rev2.kicad_sym")
+    (options "")
+    (descr "ATF1504 PLCC44 pin mapping")))

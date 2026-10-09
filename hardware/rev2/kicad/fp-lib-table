@@ -1,0 +1,8 @@
+(fp_lib_table
+  (version 7)
+  (lib
+    (name "Rev2")
+    (type "KiCad")
+    (uri "${KIPRJMOD}/Rev2.pretty")
+    (options "")
+    (descr "Copied HP connector and USB-C footprints")))

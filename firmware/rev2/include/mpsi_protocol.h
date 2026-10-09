@@ -15,9 +15,12 @@ typedef struct {
 
 static inline bool mpsi_config_valid(mpsi_config c)
 {
-    return c.gp_address > 0 && c.gp_address < 16 && c.gp_address != 10 &&
-           c.tp_address > 0 && c.tp_address < 16 && c.tp_address != 10 &&
-           c.gp_address != c.tp_address && c.irq_selector < 8 &&
+    /* Validate in firmware; the CPLD shifts configuration without checking it. */
+    /* Select code zero disables a port; it is never an HP SC0 decode. */
+    return c.gp_address < 16 && c.gp_address != 10 &&
+           c.tp_address < 16 && c.tp_address != 10 &&
+           (!c.gp_address || !c.tp_address || c.gp_address != c.tp_address) &&
+           c.irq_selector < 5 &&
            (!c.printer_enabled || (c.gp_address != 15 && c.tp_address != 15));
 }
 static inline uint16_t mpsi_config_word(mpsi_config c)

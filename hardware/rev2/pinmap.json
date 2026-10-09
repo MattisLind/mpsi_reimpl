@@ -1,0 +1,526 @@
+{
+  "revision": "tentative-3",
+  "mcu_part": "STM32F103CBT6",
+  "cpld_part": "ATF1504AS-10JU44",
+  "cpld_package": "PLCC44",
+  "mcu": {
+    "1": [
+      "VBAT",
+      "+3V3",
+      "power"
+    ],
+    "2": [
+      "PC13",
+      null,
+      "spare"
+    ],
+    "3": [
+      "PC14",
+      null,
+      "spare"
+    ],
+    "4": [
+      "PC15",
+      null,
+      "spare"
+    ],
+    "5": [
+      "PD0",
+      "HSE_IN",
+      "clock"
+    ],
+    "6": [
+      "PD1",
+      "HSE_OUT",
+      "clock"
+    ],
+    "7": [
+      "NRST",
+      "MCU_RESET_n",
+      "in"
+    ],
+    "8": [
+      "VSSA",
+      "GND",
+      "power"
+    ],
+    "9": [
+      "VDDA",
+      "+3V3",
+      "power"
+    ],
+    "10": [
+      "PA0",
+      "BUTTON_UP_n",
+      "in"
+    ],
+    "11": [
+      "PA1",
+      "BUTTON_DOWN_n",
+      "in"
+    ],
+    "12": [
+      "PA2",
+      "BUTTON_SELECT_n",
+      "in"
+    ],
+    "13": [
+      "PA3",
+      "USB_VBUS_SENSE",
+      "in"
+    ],
+    "14": [
+      "PA4",
+      "SD_CS_n",
+      "out"
+    ],
+    "15": [
+      "PA5",
+      "SD_SCK",
+      "out"
+    ],
+    "16": [
+      "PA6",
+      "SD_MISO",
+      "in"
+    ],
+    "17": [
+      "PA7",
+      "SD_MOSI",
+      "out"
+    ],
+    "18": [
+      "PB0",
+      null,
+      "spare"
+    ],
+    "19": [
+      "PB1",
+      "CPLD_CFG_FRAME",
+      "out"
+    ],
+    "20": [
+      "PB2",
+      "BOOT1",
+      "in"
+    ],
+    "21": [
+      "PB10",
+      "CPLD_REQUEST_n",
+      "in_5v_ft"
+    ],
+    "22": [
+      "PB11",
+      null,
+      "spare"
+    ],
+    "23": [
+      "VSS1",
+      "GND",
+      "power"
+    ],
+    "24": [
+      "VDD1",
+      "+3V3",
+      "power"
+    ],
+    "25": [
+      "PB12",
+      "CPLD_CS_n",
+      "out"
+    ],
+    "26": [
+      "PB13",
+      "HP_SPI_SCK",
+      "out"
+    ],
+    "27": [
+      "PB14",
+      "HP_SPI_MISO",
+      "in_5v_ft"
+    ],
+    "28": [
+      "PB15",
+      "HP_SPI_MOSI",
+      "out"
+    ],
+    "29": [
+      "PA8",
+      "CPLD_MCK",
+      "out"
+    ],
+    "30": [
+      "PA9",
+      "DEBUG_TX",
+      "out"
+    ],
+    "31": [
+      "PA10",
+      "DEBUG_RX",
+      "in"
+    ],
+    "32": [
+      "PA11",
+      "USB_DM",
+      "bidirectional"
+    ],
+    "33": [
+      "PA12",
+      "USB_DP",
+      "bidirectional"
+    ],
+    "34": [
+      "PA13",
+      "SWDIO",
+      "bidirectional"
+    ],
+    "35": [
+      "VSS2",
+      "GND",
+      "power"
+    ],
+    "36": [
+      "VDD2",
+      "+3V3",
+      "power"
+    ],
+    "37": [
+      "PA14",
+      "SWCLK",
+      "in"
+    ],
+    "38": [
+      "PA15",
+      null,
+      "spare"
+    ],
+    "39": [
+      "PB3",
+      null,
+      "spare"
+    ],
+    "40": [
+      "PB4",
+      "SD_CD_n",
+      "in"
+    ],
+    "41": [
+      "PB5",
+      "USB_PULLUP_EN",
+      "out"
+    ],
+    "42": [
+      "PB6",
+      "OLED_SCL",
+      "bidirectional"
+    ],
+    "43": [
+      "PB7",
+      "OLED_SDA",
+      "bidirectional"
+    ],
+    "44": [
+      "BOOT0",
+      "BOOT0",
+      "in"
+    ],
+    "45": [
+      "PB8",
+      "CPLD_HP_RUN",
+      "out"
+    ],
+    "46": [
+      "PB9",
+      "CPLD_RESET_n",
+      "out"
+    ],
+    "47": [
+      "VSS3",
+      "GND",
+      "power"
+    ],
+    "48": [
+      "VDD3",
+      "+3V3",
+      "power"
+    ]
+  },
+  "cpld": {
+    "1": [
+      "reset_n",
+      "CPLD_RESET_n"
+    ],
+    "2": [
+      "spi_sck",
+      "HP_SPI_SCK"
+    ],
+    "3": [
+      "VCC",
+      "+5V_LOGIC"
+    ],
+    "4": [
+      "hp_n_cfi",
+      "nCFI"
+    ],
+    "5": [
+      "co_0",
+      "CO0"
+    ],
+    "6": [
+      "co_1",
+      "CO1"
+    ],
+    "7": [
+      "TDI",
+      "CPLD_TDI"
+    ],
+    "8": [
+      "co_2",
+      "CO2"
+    ],
+    "9": [
+      "co_3",
+      "CO3"
+    ],
+    "10": [
+      "GND",
+      "GND"
+    ],
+    "11": [
+      "nceo",
+      "nCEO"
+    ],
+    "12": [
+      "nsih",
+      "nSIH"
+    ],
+    "13": [
+      "TMS",
+      "CPLD_TMS"
+    ],
+    "14": [
+      "hp_n_ssi",
+      "nSSI"
+    ],
+    "15": [
+      "VCC",
+      "+5V_LOGIC"
+    ],
+    "16": [
+      "hp_n_di_11",
+      "nSI3"
+    ],
+    "17": [
+      "hp_n_di_10",
+      "nSI2"
+    ],
+    "18": [
+      "hp_n_di_9",
+      "nSI1"
+    ],
+    "19": [
+      "hp_n_di_8",
+      "nSI0"
+    ],
+    "20": [
+      "hp_n_di_7",
+      "nDI7"
+    ],
+    "21": [
+      "hp_n_di_6",
+      "nDI6"
+    ],
+    "22": [
+      "GND",
+      "GND"
+    ],
+    "23": [
+      "VCC",
+      "+5V_LOGIC"
+    ],
+    "24": [
+      "hp_n_di_5",
+      "nDI5"
+    ],
+    "25": [
+      "hp_n_di_4",
+      "nDI4"
+    ],
+    "26": [
+      "hp_n_di_3",
+      "nDI3"
+    ],
+    "27": [
+      "hp_n_di_2",
+      "nDI2"
+    ],
+    "28": [
+      "hp_n_di_1",
+      "nDI1"
+    ],
+    "29": [
+      "hp_n_di_0",
+      "nDI0"
+    ],
+    "30": [
+      "GND",
+      "GND"
+    ],
+    "31": [
+      "input_pl_n",
+      "HP_INPUT_PL_n"
+    ],
+    "32": [
+      "TCK",
+      "CPLD_TCK"
+    ],
+    "33": [
+      "request_n",
+      "CPLD_REQUEST_n"
+    ],
+    "34": [
+      "SPARE34",
+      null
+    ],
+    "35": [
+      "VCC",
+      "+5V_LOGIC"
+    ],
+    "36": [
+      "spi_mosi",
+      "HP_SPI_MOSI"
+    ],
+    "37": [
+      "cfg_frame",
+      "CPLD_CFG_FRAME"
+    ],
+    "38": [
+      "TDO",
+      "CPLD_TDO"
+    ],
+    "39": [
+      "SPARE39",
+      null
+    ],
+    "40": [
+      "SPARE40",
+      null
+    ],
+    "41": [
+      "spi_cs_n",
+      "CPLD_CS_n"
+    ],
+    "42": [
+      "GND",
+      "GND"
+    ],
+    "43": [
+      "mck",
+      "CPLD_MCK"
+    ],
+    "44": [
+      "hp_run",
+      "CPLD_HP_RUN"
+    ]
+  },
+  "connector": {
+    "a1": null,
+    "b1": "GND",
+    "a2": "nCFI",
+    "b2": "nCEO",
+    "a3": "nSIH",
+    "b3": "nSSI",
+    "a4": "CO3",
+    "b4": "CO2",
+    "a5": "CO1",
+    "b5": "CO0",
+    "a6": "nSI3",
+    "b6": "SO3",
+    "a7": "nSI2",
+    "b7": "SO2",
+    "a8": "nSI1",
+    "b8": "SO1",
+    "a9": "nSI0",
+    "b9": "SO0",
+    "a10": "nDI7",
+    "b10": "DO7",
+    "a11": "nDI6",
+    "b11": "DO6",
+    "a12": "nDI5",
+    "b12": "DO5",
+    "a13": "nDI4",
+    "b13": "DO4",
+    "a14": "nDI1",
+    "b14": "nDI2",
+    "a15": "DO3",
+    "b15": "nDI3",
+    "a16": "DO2",
+    "b16": "DO1",
+    "a17": "DO0",
+    "b17": "nDI0",
+    "a18": null,
+    "b18": null,
+    "a19": null,
+    "b19": null,
+    "a20": null,
+    "b20": null,
+    "a21": "HP_5V",
+    "b21": "HP_5V",
+    "a22": "GND",
+    "b22": "GND",
+    "a23": null,
+    "b23": null,
+    "a24": null,
+    "b24": null,
+    "a25": null,
+    "b25": null
+  },
+  "debug_header": [
+    "+3V3",
+    "DEBUG_TX",
+    "DEBUG_RX",
+    "GND"
+  ],
+  "placement_mm": {
+    "U1": [
+      118,
+      80,
+      90
+    ],
+    "U2": [
+      82,
+      78,
+      90
+    ],
+    "U3": [
+      63,
+      94,
+      0
+    ],
+    "U4": [
+      63,
+      59,
+      0
+    ],
+    "J2": [
+      171,
+      113,
+      90
+    ],
+    "J3": [
+      160,
+      80,
+      90
+    ],
+    "J4": [
+      143,
+      43,
+      0
+    ],
+    "J5": [
+      151,
+      96,
+      0
+    ]
+  }
+}

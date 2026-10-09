@@ -1,0 +1,363 @@
+(footprint "HRO-TYPE-C-31-M-12"
+  (version 20241229)
+  (generator "pcbnew")
+  (layer "F.Cu")
+  (property "Reference" "REF**"
+    (at 6.987 -5.013 0)
+    (layer "F.SilkS")
+    (uuid "f86f31fa-65eb-43c6-884e-ad5e1f8d60f1")
+    (effects
+      (font
+        (size 1 1)
+        (thickness 0.15))))
+  (property "Value" "HRO-TYPE-C-31-M-12"
+    (at 0 1.15 0)
+    (layer "Dwgs.User")
+    (uuid "00a23b53-723c-4c6e-86ea-b2c6ec1d3edb")
+    (effects
+      (font
+        (size 1 1)
+        (thickness 0.15))))
+  (property "Datasheet" "https://datasheet.lcsc.com/szlcsc/1811131825_Korean-Hroparts-Elec-TYPE-C-31-M-12_C165948.pdf"
+    (at 0 0 0)
+    (layer "F.Fab")
+    (hide yes)
+    (uuid "c77ea7b8-ae73-44a3-bc6f-7c5acfc0f40a")
+    (effects
+      (font
+        (size 1.27 1.27)
+        (thickness 0.15))))
+  (property "Description" "USB type-C Female SMD 5A 12pos"
+    (at 0 0 0)
+    (layer "F.Fab")
+    (hide yes)
+    (uuid "8c1fca7c-9686-442d-95a5-561f8aaf38fe")
+    (effects
+      (font
+        (size 1.27 1.27)
+        (thickness 0.15))))
+  (property "LCSC" "C165948"
+    (at 0 0 0)
+    (unlocked yes)
+    (layer "F.Fab")
+    (hide yes)
+    (uuid "816be86a-fbcd-46be-b485-babda137eb8d")
+    (effects
+      (font
+        (size 1 1)
+        (thickness 0.15))))
+  (property "ASSYOPT" "IN"
+    (at 0 0 0)
+    (unlocked yes)
+    (layer "F.Fab")
+    (hide yes)
+    (uuid "208078af-960a-493b-85c5-3ccf857e3aef")
+    (effects
+      (font
+        (size 1 1)
+        (thickness 0.15))))
+  (property "MPN" "TYPE-C-31-M-12"
+    (at 0 0 0)
+    (unlocked yes)
+    (layer "F.Fab")
+    (hide yes)
+    (uuid "f441b884-96a3-4fe5-8e2a-d1c46f726ca8")
+    (effects
+      (font
+        (size 1 1)
+        (thickness 0.15))))
+  (property "Manufacturer" "Korean Hroparts Elec"
+    (at 0 0 0)
+    (unlocked yes)
+    (layer "F.Fab")
+    (hide yes)
+    (uuid "2b5a380b-38f5-4399-8344-db7bf4f2c12d")
+    (effects
+      (font
+        (size 1 1)
+        (thickness 0.15))))
+  (property "MOUSER" ""
+    (at 0 0 0)
+    (unlocked yes)
+    (layer "F.Fab")
+    (hide yes)
+    (uuid "8feba4e3-30de-457e-b5b1-2072745db77c")
+    (effects
+      (font
+        (size 1 1)
+        (thickness 0.15))))
+  (property "Supplier" ""
+    (at 0 0 0)
+    (unlocked yes)
+    (layer "F.Fab")
+    (hide yes)
+    (uuid "0641b4b4-0094-490a-a4f8-2b11a76cbfaa")
+    (effects
+      (font
+        (size 1 1)
+        (thickness 0.15))))
+  (property "OC_FARNELL" ""
+    (at 0 0 0)
+    (unlocked yes)
+    (layer "F.Fab")
+    (hide yes)
+    (uuid "febf515a-630b-47a5-a467-99ef0bf33fc8")
+    (effects
+      (font
+        (size 1 1)
+        (thickness 0.15))))
+  (property "OC_NEWARK" ""
+    (at 0 0 0)
+    (unlocked yes)
+    (layer "F.Fab")
+    (hide yes)
+    (uuid "694d777f-bfee-430a-81df-422a96d477aa")
+    (effects
+      (font
+        (size 1 1)
+        (thickness 0.15))))
+  (property "PACKAGE" ""
+    (at 0 0 0)
+    (unlocked yes)
+    (layer "F.Fab")
+    (hide yes)
+    (uuid "2d0bfcd4-2653-4480-a562-b76873b18d39")
+    (effects
+      (font
+        (size 1 1)
+        (thickness 0.15))))
+  (property "Part #" ""
+    (at 0 0 0)
+    (unlocked yes)
+    (layer "F.Fab")
+    (hide yes)
+    (uuid "d9f3dee3-64f0-434a-80eb-6b9a3dfb89bf")
+    (effects
+      (font
+        (size 1 1)
+        (thickness 0.15))))
+  (property "Purchase-URL" ""
+    (at 0 0 0)
+    (unlocked yes)
+    (layer "F.Fab")
+    (hide yes)
+    (uuid "35350706-e0de-46ac-bd0d-bcc7f6fedae4")
+    (effects
+      (font
+        (size 1 1)
+        (thickness 0.15))))
+  (property "SUPPLIER" ""
+    (at 0 0 0)
+    (unlocked yes)
+    (layer "F.Fab")
+    (hide yes)
+    (uuid "a3888993-c73c-4d5d-bb8e-5c96666de025")
+    (effects
+      (font
+        (size 1 1)
+        (thickness 0.15))))
+  (property "VOLTAGE" ""
+    (at 0 0 0)
+    (unlocked yes)
+    (layer "F.Fab")
+    (hide yes)
+    (uuid "a9884b19-d496-4264-b473-e1ef80a3a726")
+    (effects
+      (font
+        (size 1 1)
+        (thickness 0.15))))
+  (property "Sim.Device" ""
+    (at 0 0 0)
+    (unlocked yes)
+    (layer "F.Fab")
+    (hide yes)
+    (uuid "1d27b8e0-8ccd-452c-837d-433716f612e3")
+    (effects
+      (font
+        (size 1 1)
+        (thickness 0.15))))
+  (property "Sim.Pins" ""
+    (at 0 0 0)
+    (unlocked yes)
+    (layer "F.Fab")
+    (hide yes)
+    (uuid "80e340f3-55b1-48ca-98ee-eb69e26b1125")
+    (effects
+      (font
+        (size 1 1)
+        (thickness 0.15))))
+  (property "Sim.Type" ""
+    (at 0 0 0)
+    (unlocked yes)
+    (layer "F.Fab")
+    (hide yes)
+    (uuid "11fd02bd-9bc6-4fa3-b97c-c0faa24a575c")
+    (effects
+      (font
+        (size 1 1)
+        (thickness 0.15))))
+  (property "Comment" ""
+    (at 0 0 0)
+    (unlocked yes)
+    (layer "F.Fab")
+    (hide yes)
+    (uuid "a34526c7-1731-498e-9e31-93872311dd2c")
+    (effects
+      (font
+        (size 1 1)
+        (thickness 0.15))))
+  (attr smd)
+  (fp_line
+    (start -4.47 -7.3)
+    (end 4.47 -7.3)
+    (stroke
+      (width 0.15)
+      (type solid))
+    (layer "Dwgs.User")
+    (uuid "cc33fee0-008f-49e2-882e-7f376acd6196"))
+  (fp_line
+    (start -4.47 0)
+    (end -4.47 -7.3)
+    (stroke
+      (width 0.15)
+      (type solid))
+    (layer "Dwgs.User")
+    (uuid "289c5826-6fdb-46ea-91a3-3eedf1fc4df0"))
+  (fp_line
+    (start -4.47 0)
+    (end 4.47 0)
+    (stroke
+      (width 0.15)
+      (type solid))
+    (layer "Dwgs.User")
+    (uuid "b09348b1-c431-4725-a8e6-7759f350ad67"))
+  (fp_line
+    (start 4.47 0)
+    (end 4.47 -7.3)
+    (stroke
+      (width 0.15)
+      (type solid))
+    (layer "Dwgs.User")
+    (uuid "9713bb22-7d20-4166-923e-74c01d0f7e13"))
+  (pad "" np_thru_hole circle
+    (at -2.89 -6.25 0)
+    (size 0.65 0.65)
+    (drill 0.65)
+    (layers "*.Cu" "*.Mask"))
+  (pad "" np_thru_hole circle
+    (at 2.89 -6.25 0)
+    (size 0.65 0.65)
+    (drill 0.65)
+    (layers "*.Cu" "*.Mask"))
+  (pad "1" smd rect
+    (at -3.225 -7.695 0)
+    (size 0.6 1.45)
+    (layers "F.Cu" "F.Mask" "F.Paste")
+    (pinfunction "GND")
+    (pintype "input"))
+  (pad "2" smd rect
+    (at -2.45 -7.695 0)
+    (size 0.6 1.45)
+    (layers "F.Cu" "F.Mask" "F.Paste")
+    (pinfunction "VBUS")
+    (pintype "input"))
+  (pad "3" smd rect
+    (at -1.75 -7.695 0)
+    (size 0.3 1.45)
+    (layers "F.Cu" "F.Mask" "F.Paste")
+    (pinfunction "SBU2")
+    (pintype "input+no_connect"))
+  (pad "4" smd rect
+    (at -1.25 -7.695 0)
+    (size 0.3 1.45)
+    (layers "F.Cu" "F.Mask" "F.Paste")
+    (pinfunction "CC1")
+    (pintype "input"))
+  (pad "5" smd rect
+    (at -0.75 -7.695 0)
+    (size 0.3 1.45)
+    (layers "F.Cu" "F.Mask" "F.Paste")
+    (pinfunction "DN2")
+    (pintype "input"))
+  (pad "6" smd rect
+    (at -0.25 -7.695 0)
+    (size 0.3 1.45)
+    (layers "F.Cu" "F.Mask" "F.Paste")
+    (pinfunction "DP1")
+    (pintype "input"))
+  (pad "7" smd rect
+    (at 0.25 -7.695 0)
+    (size 0.3 1.45)
+    (layers "F.Cu" "F.Mask" "F.Paste")
+    (pinfunction "DN1")
+    (pintype "input"))
+  (pad "8" smd rect
+    (at 0.75 -7.695 0)
+    (size 0.3 1.45)
+    (layers "F.Cu" "F.Mask" "F.Paste")
+    (pinfunction "DP2")
+    (pintype "input"))
+  (pad "9" smd rect
+    (at 1.25 -7.695 0)
+    (size 0.3 1.45)
+    (layers "F.Cu" "F.Mask" "F.Paste")
+    (pinfunction "SBU1")
+    (pintype "input+no_connect"))
+  (pad "10" smd rect
+    (at 1.75 -7.695 0)
+    (size 0.3 1.45)
+    (layers "F.Cu" "F.Mask" "F.Paste")
+    (pinfunction "CC2")
+    (pintype "input"))
+  (pad "11" smd rect
+    (at 2.45 -7.695 0)
+    (size 0.6 1.45)
+    (layers "F.Cu" "F.Mask" "F.Paste")
+    (pinfunction "VBUS")
+    (pintype "input"))
+  (pad "12" smd rect
+    (at 3.225 -7.695 0)
+    (size 0.6 1.45)
+    (layers "F.Cu" "F.Mask" "F.Paste")
+    (pinfunction "GND")
+    (pintype "input"))
+  (pad "13" thru_hole oval
+    (at -4.32 -6.78 0)
+    (size 1 2.1)
+    (drill oval 0.6 1.7)
+    (layers "*.Cu" "*.Mask")
+    (remove_unused_layers no)
+    (pinfunction "SHIELD")
+    (pintype "input"))
+  (pad "13" thru_hole oval
+    (at -4.32 -2.6 0)
+    (size 1 1.6)
+    (drill oval 0.6 1.2)
+    (layers "*.Cu" "*.Mask")
+    (remove_unused_layers no)
+    (pinfunction "SHIELD")
+    (pintype "input"))
+  (pad "13" thru_hole oval
+    (at 4.32 -6.78 0)
+    (size 1 2.1)
+    (drill oval 0.6 1.7)
+    (layers "*.Cu" "*.Mask")
+    (remove_unused_layers no)
+    (pinfunction "SHIELD")
+    (pintype "input"))
+  (pad "13" thru_hole oval
+    (at 4.32 -2.6 0)
+    (size 1 1.6)
+    (drill oval 0.6 1.2)
+    (layers "*.Cu" "*.Mask")
+    (remove_unused_layers no)
+    (pinfunction "SHIELD")
+    (pintype "input"))
+  (embedded_fonts no)
+  (model "3d-models/HRO  TYPE-C-31-M-12.step"
+    (offset
+      (xyz -4.5 0 0))
+    (scale
+      (xyz 1 1 1))
+    (rotate
+      (xyz 90 180 180))))

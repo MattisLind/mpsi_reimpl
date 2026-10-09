@@ -12,7 +12,7 @@ typedef struct {
     void (*hp_run)(void *, bool);
     bool (*hp_quiescent)(void *); // CEO idle, no request/queued work, no active transfer
     bool (*hp_prepare)(void *);   // reset queues, apply config, stage data (flags clear)
-    bool (*hp_ready)(void *);     // after HP_RUN rises, commit initial ACK/status
+    bool (*hp_ready)(void *);     // after HP_RUN rises, send initial ACK/status; CS rising loads flags
     bool (*fs_mount)(void *);
     bool (*fs_flush_close)(void *); // every open file/cache, including tape writes
     bool (*fs_sync)(void *);

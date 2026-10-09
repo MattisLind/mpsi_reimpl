@@ -6,66 +6,75 @@ Run from the repository root:
 make test
 ```
 
-Requires a C11 compiler, make, and Icarus Verilog (`iverilog` and `vvp`).
-Build products go in the ignored `build/rev2` directory.
+Requires make, a C11 compiler and either local GHDL or the documented Docker
+image. Build products go in the ignored `build/rev2` directory. The smaller
+simulation image can be built with `python3 scripts/rev2_hdl.py build-sim-image`;
+see [hardware build notes](../hardware/rev2/README.md).
 
-First run, 2026-10-08: `make test` passes 200 HDL assertions and the portable C
-suite. The standalone RTL also compiles in Verilog-2005 mode. Document links and
-the issue table were checked; the archived README matches the original exactly.
+Verified 2026-10-09: the VHDL-2008 bench passes **2,000 checks at each of 9, 18
+and 24 MHz SPI**, with a 24 MHz one-third-duty-cycle MCK. The portable C suite passes with the revised IRQ3 and
+zero-address decoder-disable configuration. The full private tool container
+builds; GHDL/Yosys synthesis passes its structural check. Corrected Atmel fitting
+declares **a fit**, generates JEDEC and retains all 29 requested pins, fourteen
+open-collector HP outputs, JTAG and disabled pin keepers. The simplified RTL and
+fitter both retain 36 registers. A functional translation of the fitter-emitted
+VHO gates/flip-flops passes the same 2,000 checks at each rate. Run it with:
 
-The subsequent issue reviews accepted MCU-generated 24 MHz, five interrupt ID
-lines with three reserved selector codes, reference interrupt gating, Arduino/
-SdFat target integration and SIMH TAP storage. These are documentation changes:
-the RTL/tests still use the earlier 8 MHz clock assumption, DI4..11 selector
-mapping and extra interrupt masking; firmware has no target or TAP backend.
-Update and verify them through issues 004, 005, 009 and 010 before claiming
-coverage of the revised requirements.
+```sh
+python3 scripts/rev2_hdl.py postfit
+```
 
-Subsequent tape analysis added the explicit Tape Controller role and verified the
-experimental raw-cell BOF/TAP encoding on the supplied machine.t98 image. The
-user's correction distinguishes BOF from conventional TAP file termination;
-logical-file mapping and exact padding preservation remain open in issue 009.
-This analysis does not add a target TAP backend, proxy controller or per-role
-CPLD enables.
+This is a zero-delay equation check; SDF is emitted but not applied, JEDEC fuse
+encoding is not independently decoded and hardware timing remains unverified.
+The report's inconsistent 65/64 macrocell total is recorded in issue 029; do not
+derive free-resource margins from it. Earlier apparent fitting with a disconnected
+TRI enable was rejected; the build-local liberty correction preserves that logic.
+The F103 is specified up to 18 MHz SPI. The 24 MHz run is functional stimulus;
+9 MHz is the provisional board rate pending the MCU/HCT165/CPLD timing budget.
 
-On 2026-10-09 the user selected VHDL and the private atf15xx-yosys-docker tool
-repository as a submodule under hardware/rev2/rtl. Registration currently fails
-SSH authentication; the existing tests remain Icarus/Verilog until the RTL and
-bench are ported. No VHDL simulation, container build or JEDEC is verified yet.
+The three-sheet KiCad schematic passes ERC with zero violations. Exported nets
+are checked against the MCU/CPLD package map, connector/debug pins, HCT165 word
+order, SD detection and USB protection. The unrouted PCB has zero schematic
+parity mismatches; fifty connector pad positions/sizes/angles/layers are checked
+against the legacy board during generation. Placement has no shorts or courtyard
+overlaps or silkscreen collisions. Final placement DRC reports two clearance
+violations, 236 unrouted connections and zero schematic parity mismatches.
+Manufacturing DRC is not complete: unrouted nets and the reference
+USB-C footprint's 0.175 mm pad clearance need a production rule/geometry review.
+The two clearance violations both concern that copied USB-C footprint.
 
 | ID | Check | Current result |
 | --- | --- | --- |
-| VER-001 | General output clears SI0, captures data, and restores ready. | RTL simulation passes. |
-| VER-002 | General input direction, data before ACK, SIH gating and SC15 enable/disable. | RTL simulation passes. |
-| VER-003 | Fast read/write held CEO, finite PL, no recapture, CFI and CEO feedback. | RTL simulation passes. |
-| VER-004 | All select codes; five ID lines and three reserved codes; reference normal-status/ID combination, SIH inhibit and CEO clear. | Earlier mapping and blanket interrupt masking pass simulation; revised mapping, reserved codes and reference gating remain untested. |
-| VER-005 | Exact SPI length, truncated/overlong frames, config interlocks and safe unconfigured state. | RTL simulation passes. |
-| VER-006 | Unread capture preserved, unread/busy overrun detected, reset/MSC releases bus. | RTL simulation passes. |
+| VER-001 | General output clears SI0, captures data, and restores ready. | VHDL simulation passes. |
+| VER-002 | General input direction, data before ACK, SIH gating and SC15 enable/disable. | VHDL simulation passes. |
+| VER-003 | Fast read/write held CEO, finite PL, no recapture, CFI and CEO feedback. | VHDL simulation passes. |
+| VER-004 | All select codes; five ID lines and three reserved codes; reference normal-status/ID combination, SIH inhibit and CEO clear. | Revised mapping, reserved-code silence and selected GP status beside ID pass VHDL simulation. |
+| VER-005 | Sixteen-bit transfers, direct configuration masked during shifting, direct data/status and flags held until CS rises. | RTL and fitter-equation simulations pass at 9/18/24 MHz, including all CO values during a live config update. Firmware rejects invalid configurations. No hardware frame checking, output latch bank or separate COMMIT. |
+| VER-006 | Finite input capture, one capture per CEO assertion, CS clears request/inhibits loads, reset/MSC/configuration releases bus. | RTL and fitter-equation simulations pass. A new request replaces an unread capture; no overrun monitor or unread-word protection is required. |
 | VER-007 | File bytes/EOF, cassette read/reverse/continue/control marks, write protection and bounded cache retries. | Host C tests pass with fake media. |
 | VER-008 | FAT/MSC exclusion, handover ordering, LBA bounds, host-eject interlock and injected failures. | Host C tests pass with fake filesystem/USB. |
-| VER-009 | CPLD fitting, open-collector output mapping, clocks, reset recovery and post-fit timing. | Not run; required before PCB sign-off. |
-| VER-010 | Arduino STM32 cross-build, SdFat/MSC round trips, automatic card rescan/media changes, buttons/OLED and measured service latency. | Target integration not implemented. |
-| VER-011 | Validate fourteen 1 kOhm loads and diode-fed rail; measure CEO width, CO/SO/DO stability, PL and setup to ready flags at 24 MHz. | Pull-up values supplied by user; electrical/timing measurements not performed. |
-| VER-012 | HP PTAPE/LIST/WRITE/LOAD/STORE/TLIST/rewind, physical MTAPE proxy read/write and role gating. | Not tested on HP; controller/role-enable implementation absent. |
-| VER-013 | Analyze supplied XNS headers/checksums, compare .f98 contents, verify experimental TAP cell encoding and BOF recovery. | scripts/analyze_t98.py passes on the one supplied .t98 and two .f98 files. Unchanged legacy util.c/tpf.c independently rebuild all 4,895 cells exactly. The raw-cell experiment does not verify conventional TAP-file semantics; production mapping/backend remain open. |
+| VER-009 | CPLD fitting, open-collector mapping, fixed pins, fitted equations, clocks and timing. | Synthesis/fitting, 29 retained pins, 14 open-collector outputs, JTAG/keepers, 36 registers and fitted-equation bench pass; JEDEC/VHO/SDF exist. Timing/fuse validation and report accounting remain in 005/028/029. |
+| VER-010 | Arduino STM32 cross-build, SdFat/MSC round trips, media changes, buttons/OLED and measured service latency. | Target integration not implemented. Package contract now assigns HP to SPI2 and 3.3 V SD to SPI1. |
+| VER-011 | Validate fourteen 1 kOhm loads and diode-fed rail; measure CEO width, CO/SO/DO stability, PL and setup to ready flags. | Pull-ups supplied by user; electrical/timing measurements not performed. Direct FT input supply/reset validation remains in 026. |
+| VER-012 | HP PTAPE/LIST/WRITE/LOAD/STORE/TLIST/rewind and physical MTAPE proxy. | GP-only Controller decoder configuration passes simulation; firmware jobs and actual HP/cassette trials remain open. |
+| VER-013 | Analyze XNS headers/checksums, compare .f98 contents, verify experimental TAP cell encoding and BOF recovery. | Earlier analysis passes on one .t98 and two .f98 files; legacy util.c/tpf.c independently rebuild all 4,895 cells exactly. Production conventional-TAP mapping/backend remain open. |
+| VER-014 | Package/inline/netlist consistency, all MCU/CPLD/debug pins, HCT165 bit order, USB/SD wiring and schematic ERC. | Revised 29-pin assignment fits and matches netlist; all 348 PCB pad nets match; ERC zero. Physical sign-off remains open. |
+| VER-015 | Reused connector geometry, placement shorts/courtyards and schematic-to-PCB parity. | Geometry assertion passes; no placement shorts/courtyard overlap; parity zero. Board is unrouted; remaining DRC/fabrication work is in 027. |
 
-The HDL bench cites the source pages in its header and drives the documented
-General pulse/poll/SI0 and Fast held-CEO/CFI/feedback sequences. It also checks the
-MPSI status/data gating policy. A simulation-only transparent-load/shift model
-represents the two HCT165s, using non-inverting Q7.
+The HDL bench cites Hilpert's source pages in its header and drives documented
+General pulse/poll/SI0 and Fast held-CEO/CFI/feedback sequences. A transparent-load/
+shift model represents the two HCT165s using non-inverting Q7. It checks two
+24 MHz load cycles and a request only after PL closes. Its 2 us CEO pulse is a
+test choice, not an HP minimum specification. The capture controller's reset-release
+recovery must still be measured or checked against valid fitted timing.
 
 Functional simulation does not model analog loading, metastability, propagation
-skew, current limits, SD stalls or the HP CPU/ROM. Passing tests do not establish
-hardware compatibility or ATF1504 fit. The bench's 2 us CEO pulse is a test choice,
-not an HP minimum timing specification.
+skew, current limits, SD stalls or the HP CPU/ROM. Neither ERC nor a simulation
+pass establishes voltage compatibility, rail margin, physical timing or correctness
+of the programmed device. The generated image is a candidate for hardware validation.
 
-Next steps:
-
-1. Validate bus current, diode-fed rail, existing connector geometry and capture timing.
-2. Register the chosen tool submodule, port RTL/bench to VHDL, assign package pins
-   and prove fit through the GHDL/Yosys/Atmel-fitter flow.
-3. Draw a new schematic with voltage conversion and USB power isolation.
-4. Implement Arduino STM32 SPI/link queue, SdFat cache, TinyUSB and SSD1306/button drivers.
-5. Validate both bus modes and file persistence with captures from a real HP.
-6. Implement/validate Controller GP jobs, per-role device enables and physical
-   read streaming/buffered writes with the MTAPE proxy and its RAM limits.
+Remaining work: reconcile fitter resource accounting and verify the image/device;
+validate capture/SPI timing; resolve bus loading,
+diodes and direct-input startup; finish mechanical review/routing; implement
+Arduino/SdFat/TinyUSB/SSD1306 drivers and Controller jobs; then exercise both
+modes, cassette operations and file persistence on an actual HP.

@@ -35,7 +35,10 @@ The current portable firmware only implements server functions. It does not
 implement the MTAPE controller, a role dispatcher or a physical-tape job UI.
 Controller mode needs GP enabled and TP/printer emulation disabled. HP_RUN=0
 alone cannot implement that distinction, because it also disables the GP link
-needed by the proxy. Role enable/configuration work is tracked in issue 025.
+needed by the proxy. The VHDL update now uses select code zero to disable
+GP/TP independently without responding to HP SC0. Controller GP8/TP-off/
+printer-off/IRQ3 is 0x0608, verified by the bench. Firmware role/physical-job
+work remains in issue 025; CPLD fitting remains in 004.
 
 BOF means **Beginning of File**. On HP cassette it is an actual byte `0x3C`
 recorded with its control bit set. The physical drive can search for it in either

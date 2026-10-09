@@ -9,13 +9,16 @@ The accepted target stack is official Arduino_Core_STM32 with SdFat. Follow the
 user's HP21xx emulator (S15) for board integration: its current firmware uses
 Adafruit TinyUSB and U8g2, with the STM32 TinyUSB port identified in its README.
 Pin compatible dependency versions when adding a reproducible Arduino build.
-Use the selected SSD1306 renderer here; the reference's SH1106 constructor is
-for a different panel. The reference's SD uses SPI1; this design must instead
-pass a dedicated SPI2 instance to SdFat because SPI1 serves the CPLD/HCT165s.
+Use [the package pin contract](08_pin_mapping.md): use SPI2 for HP and SPI1 for SD,
+disable JTAG while keeping SWD, and leave direct FT inputs without internal pulls.
+Reserve USART1 PA9/PA10 for the four-pin debug header; PA3 senses divided VBUS
+and PB5 controls USB attachment. Use the selected SSD1306 renderer here; the reference's SH1106 constructor is
+for a different panel. The reference's SD uses SPI1, as does this design; SPI2 serves the CPLD/HCT165s.
+Pass the dedicated SPI1 instance to SdFat and release PB4 from JTAG for card detect.
 
 | ID | Requirement |
 | --- | --- |
-| FW-001 | Use SdFat on a dedicated SPI2 instance with FAT16/FAT32; verify flash/RAM use on the chosen F103 Arduino build. |
+| FW-001 | Use SdFat on a dedicated SPI1 instance with FAT16/FAT32; verify flash/RAM use on the chosen F103 Arduino build. |
 | FW-002 | In MPSI Server mode, General input reads the selected paper-tape file byte by byte; EOF returns NUL. General output and printer traffic append to selected capture files. |
 | FW-003 | In MPSI Server mode, implement virtual-tape commands 0/1 forward read, 2/3 reverse read, 4 forward write, 5 stop, and 6/7 continuation. Preserve control markers separately from data bytes. |
 | FW-004 | Buffer SD reads/writes. The HP handler shall not make blocking SD/filesystem calls. Acknowledge writes only after securing space in the write buffer. |
@@ -23,7 +26,7 @@ pass a dedicated SPI2 instance to SdFat because SPI1 serves the CPLD/HCT165s.
 | FW-006 | Enter MSC at the operator's request: disable HP service, flush/close files and caches, sync the card, unmount FAT, then attach USB. The operator is responsible for avoiding an active HP transfer. |
 | FW-007 | Leave MSC after host release and drained block requests: detach USB, remount/rescan FAT, invalidate old handles/caches, reinitialize the HP link, then serve. |
 | FW-008 | Keep HP disabled on handover/file errors and report the failure. A failed unmount or USB drain must never lead to dual ownership. |
-| FW-009 | Queue every SPI receive word qualified by a pending request, including transfers used to send responses. Treat CPLD overrun as a visible service fault. |
+| FW-009 | Sample REQUEST_n before lowering CS and queue every qualified receive word, including transfers used to send responses. CS low clears the request. Rely on timely service/HP handshaking; no CPLD overrun signal is provided. |
 | FW-010 | Prioritize HP service above SD maintenance and OLED work; refresh the OLED in short chunks. |
 | FW-011 | Provide SSD1306 display and debounced up/down/select buttons for role/file selection, write protection, addresses, interrupt selection, physical-tape jobs/progress and MSC. |
 | FW-012 | Card removal or media errors shall stop HP service; USB shall report errors rather than successful block operations. |
@@ -35,6 +38,7 @@ pass a dedicated SPI2 instance to SdFat because SPI1 serves the CPLD/HCT165s.
 | FW-018 | Dispatch by mutually exclusive application role: MPSI Server, Tape Controller or MSC. Both HP roles may own local FAT; only Server invokes the paper/printer/virtual-tape handlers. Controller uses GP directive/reply jobs through the HP MTAPE proxy, with TP/printer emulation disabled. |
 | FW-019 | Provide controller jobs for reading/writing physical cassette images/files, rewind and stop, with status/progress on the three-button UI. Stream through bounded SD buffers; preserve the proxy's command/status mapping, word packing and a verified HP RAM segment limit. Match or configure the proxy's GP select code. |
 | FW-020 | Distinguish HP BOF at the start of a cassette file from a SIMH tape mark terminating/separating TAP files. Define HP-file record grouping, BOF reconstruction and zero-padding preservation under issue 009. Retain HP headers, checksum bytes, reserved allocation and the empty HP EOT file; ignore TAP alignment pads and reject unsupported control values without discarding them silently. |
+| FW-022 | Initialize the package pin map before enabling HP service; preserve PA9/PA10 serial debug, continuous TIM1 clock and direct-input FT/power constraints. |
 | FW-021 | Physical captures initially lack BOF flags. Recover markers by parsing bounded header/allocation spans, not by replacing all ordinary 0x3C values. Preserve original data and checksum bytes and report ambiguous/truncated captures; keep optional renumber/checksum/padding repair separate. |
 
 Ownership implemented in `mpsi_storage.c`:
@@ -54,7 +58,11 @@ SERVING in the current core means locally owned FAT with server functions; it
 does not implement the required Tape Controller role. Add an application-role
 dispatcher and controller transport/job engine. Switching HP roles disables
 service, closes/syncs files, clears pending queues and flags, selects the required
-device enables and prepares the next handler before restoring service. The
+device configuration and prepares the next handler before restoring service.
+VHDL implements GP-only Controller gating through TP select code zero; GP8/TP-off/
+printer-off/IRQ3 is 0x0608. Server GP8/TP9/IRQ3 is 0x0698, or 0x0798 with printer.
+The portable configuration validator and tests accept zero as a decoder disable
+and reject reserved interrupt selectors. The
 operator stops HP use/controller jobs before a mode change. MSC owns no HP role
 and may not run controller jobs. On host release restore the selected local role
 only after media/configuration revalidation. The new role UI and target code
@@ -76,8 +84,19 @@ USB edits; do not retain stale FAT handles.
 
 `hp_prepare` runs with HP_RUN low, resets queues, programs validated configuration
 and stages data with flags clear. Raising HP_RUN releases the flag resets;
-`hp_ready` then commits initial ACK/status. Writing ACK while HP_RUN is low cannot
+`hp_ready` then sends initial ACK/status, loaded when CS returns high. Writing ACK while HP_RUN is low cannot
 initialize it. The core publishes serving mode after the ready callback succeeds.
+
+The data/status shift register drives the HP gates directly. Transmit responses
+only while General ACK is clear or Fast CFI is clear and the request is being
+serviced; after asserting ready, retain the data until the next request. Do not
+poll inputs by sending dummy frames while the HP can read the previous response.
+CS rising loads ACK/CFI/SSI after the last SPI edge and the settling guard; there
+is no separate COMMIT pin or data-first/repeat requirement. Configuration uses
+CFG_FRAME to disable HP service while its bits shift. Start HP SPI2 at 9 MHz;
+18 MHz is the MCU's specified ceiling, and the proposed 24 MHz needs resolution
+under issue 028. Give unacknowledged Fast commands prompt service without waiting
+for display or SD work; the hardware has no overrun monitor or unread-word lock.
 
 The cassette engine has a random-access media abstraction returning OK, BUSY or
 ERROR. A cache miss returns BUSY; control-marker searches examine at most 32 cells

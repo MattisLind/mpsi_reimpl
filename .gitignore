@@ -1,1 +1,6 @@
 /build/
+__pycache__/
+*.pyc
+/hardware/rev2/kicad/*.kicad_prl
+/hardware/rev2/kicad/~*.lck
+/hardware/rev2/kicad/*-backups/
